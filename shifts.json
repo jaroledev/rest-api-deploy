@@ -1,0 +1,62 @@
+[
+    {
+      "id": "2e3c25e8-5f44-4c21-bb09-c9b78943e489",
+      "rider_id": 2,
+      "entry_datetime": "2023-08-29T09:00:00",
+      "end_datetime": "2023-08-29T17:00:00",
+      "entry_km": 200,
+      "end_km": 220,
+      "orders": 12,
+      "is_holiday": false
+    },
+    {
+      "id": "3f48719b-59d2-4aa3-9436-9b3b1c46ec67",
+      "rider_id": 3,
+      "entry_datetime": "2023-08-28T12:00:00",
+      "end_datetime": "2023-08-28T20:00:00",
+      "entry_km": 125,
+      "end_km": 138,
+      "orders": 9,
+      "is_holiday": false
+    },
+    {
+      "id": "5c216a5a-6b3d-477f-9a33-ba186551e305",
+      "rider_id": 4,
+      "entry_datetime": "2023-08-27T08:00:00",
+      "end_datetime": "2023-08-27T16:00:00",
+      "entry_km": 230,
+      "end_km": 245,
+      "orders": 14,
+      "is_holiday": false
+    },
+    {
+      "id": "d201f67e-d470-4c43-9cc2-5c4757a9b0bc",
+      "rider_id": 5,
+      "entry_datetime": "2023-08-26T10:00:00",
+      "end_datetime": "2023-08-26T18:00:00",
+      "entry_km": 100,
+      "end_km": 115,
+      "orders": 8,
+      "is_holiday": true
+    },
+    {
+      "id": "99f1c1c1-18e2-4ba3-ae48-91b83a6807bf",
+      "rider_id": 6,
+      "entry_datetime": "2023-08-25T11:00:00",
+      "end_datetime": "2023-08-25T19:00:00",
+      "entry_km": 50,
+      "end_km": 67,
+      "orders": 7,
+      "is_holiday": false
+    },
+    {
+      "id": "7ac522c9-19a4-431a-9bc9-672ea14aa45f",
+      "rider_id": 7,
+      "entry_datetime": "2023-08-24T09:30:00",
+      "end_datetime": "2023-08-24T17:30:00",
+      "entry_km": 180,
+      "end_km": 192,
+      "orders": 11,
+      "is_holiday": false
+    }
+  ]

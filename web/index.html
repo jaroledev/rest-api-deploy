@@ -18,15 +18,15 @@
       }
     </style>
     <script type="module">
-      fetch('http://localhost:1234/movies')
+      fetch('http://localhost:1234/shifts')
   .then(res => res.json())
-  .then(movies => {
-    const html = movies.map(movie => {
+  .then(shifts => {
+    const html = shifts.map(shift => {
       return `
-              <article data-id="${movie.id}">
-                <h2>${movie.title}</h2>
-                <img src="${movie.poster}" alt="${movie.title}">
-                <p>${movie.year}</p>
+              <article data-id="${shift.id}">
+                <h2>${shift.title}</h2>
+                <img src="${shift.poster}" alt="${shift.title}">
+                <p>${shift.year}</p>
                 <button>Eliminar</button>
               </article>
               `

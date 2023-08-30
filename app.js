@@ -1,8 +1,8 @@
 const express = require('express')
 const crypto = require('node:crypto')
-const movies = require('./movies.json')
+const shifts = require('./shifts.json')
 
-const { validateMovie, validatePartialMovie } = require('./schemas/movies')
+const { validateShift, validatePartialShift } = require('./schemas/shifts')
 
 const app = express()
 
@@ -22,79 +22,86 @@ const ACCEPTED_ORIGINS = [
   'http;//jarole.dev'
 ]
 
-app.get('/movies', (req, res) => {
+app.get('/shifts', (req, res) => {
   const origin = req.header('origin')
   if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
     res.header('Access-Control-Allow-Origin', origin)
   }
-  const { genre } = req.query
-  if (genre) {
-    const filteredMovies = movies.filter(
-      movie => movie.genre.some(g => g.toLowerCase() === genre.toLowerCase())
+  const { rider_id } = req.query
+  if (rider_id) {
+    // Convertir rider_id a entero para asegurar la comparación correcta
+    const riderIdInt = parseInt(rider_id, 10)
+
+    if (!isNaN(riderIdInt)) {
+    const filteredShifts = shifts.filter(
+      shift => shift.rider_id === riderIdInt
     )
-    return res.json(filteredMovies)
+    return res.json(filteredShifts)
+    } else {
+    return res.status(400).json({ error: "rider_id debe ser un número entero" });
+    }
   }
-  res.json(movies)
+  res.json(shifts)
 })
 
-app.get('/movies/:id', (req, res) => {
+app.get('/shifts/:id', (req, res) => {
   const { id } = req.params
-  const movie = movies.find(movie => movie.id === id)
-  if (movie) return res.json(movie)
-  res.status(404).json({ message: 'Movie not found' })
+  const shift = shifts.find(shift => shift.id === id)
+  if (shift) return res.json(shift)
+  res.status(404).json({ message: 'Shift not found' })
 })
 
-app.post('/movies', (req, res) => {
-  const result = validateMovie(req.body)
+app.post('/shifts', (req, res) => {
+  const result = validateShift(req.body)
   if (result.error) {
     // 422 Unprocesable Request para fallos de sintaxis en la request
     return res.status(422).json({ error: JSON.parse(result.error.message) })
   }
 
-  const newMovie = {
+  const newShift = {
     id: crypto.randomUUID(), // uuid v4
     ...result.data
 
   }
   // Esto no sería REST, porque estamos guardando
   // el estado de la aplicación en memoria
-  movies.push(newMovie)
+  shifts.push(newShift)
 
-  res.status(201).json(newMovie) // es interesante devolver el recurso para actualizar la caché del cliente
+  res.status(201).json(newShift) // es interesante devolver el recurso para actualizar la caché del cliente
 })
-app.delete('/movies/:id', (req, res) => {
+app.delete('/shifts/:id', (req, res) => {
   const origin = req.header('origin')
   if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
     res.header('Access-Control-Allow-Origin', origin)
   }
   const { id } = req.params
-  const movieIndex = movies.findIndex(movie => movie.id === id)
+  const shiftIndex = shifts.findIndex(shift => shift.id === id)
 
-  if (movieIndex === -1) {
-    return res.status(404).json({ message: 'Movie not found' })
+  if (shiftIndex === -1) {
+    return res.status(404).json({ message: 'Shift not found' })
   }
-  movies.splice(movieIndex, 1)
-  return res.json({ message: 'Movie deleted' })
+  shifts.splice(shiftIndex, 1)
+  return res.json({ message: 'Shift deleted' })
 })
 
-app.patch('/movies/:id', (req, res) => {
-  const result = validatePartialMovie(req.body)
+app.patch('/shifts/:id', (req, res) => {
+  const result = validatePartialShift(req.body)
   if (!result.success) return res.status(422).json({ error: JSON.parse(result.error.message) })
   const { id } = req.params
-  const movieIndex = movies.findIndex(movie => movie.id === id)
+  const shiftIndex = shifts.findIndex(shift => shift.id === id)
 
-  if (movieIndex === -1) {
-    return res.status(404).json({ message: 'Movie not found' })
+  if (shiftIndex === -1) {
+    return res.status(404).json({ message: 'Shift not found' })
   }
-  const updatedMovie = {
-    ...movies[movieIndex],
+  const updatedShift = {
+    ...shifts[shiftIndex],
     ...result.data
   }
-  movies[movieIndex] = updatedMovie
+  shifts[shiftIndex] = updatedShift
 
-  return res.status(200).json(updatedMovie)
+  return res.status(200).json(updatedShift)
 })
-app.options('/movies/:id', (req, res) => {
+app.options('/shifts/:id', (req, res) => {
   const origin = req.header('origin')
   if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
     res.header('Access-Control-Allow-Origin', origin)
