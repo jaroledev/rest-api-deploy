@@ -1,5 +1,6 @@
 const express = require('express')
 const crypto = require('node:crypto')
+const cors = require('cors')
 const shifts = require('./shifts.json')
 
 const { validateShift, validatePartialShift } = require('./schemas/shifts')
@@ -7,6 +8,23 @@ const { validateShift, validatePartialShift } = require('./schemas/shifts')
 const app = express()
 
 app.use(express.json())
+app.use(cors({
+  origin:(origin, callback) => {
+    const ACCEPTED_ORIGINS = [
+      'http://localhost:8080',
+      'http://localhost:1234',
+      'http;//jarole.dev'
+    ]
+    if(ACCEPTED_ORIGINS.includes(origin)){
+      return callback(null, true)
+    }
+    if(!origin){
+      return callback(null, true)
+    }
+    return callback(new Error('Not allowed by CORS'))
+
+  }
+}))
 app.disable('x-powered-by')
 
 // métodos normales: GET/HEAD/POST
@@ -15,18 +33,9 @@ app.disable('x-powered-by')
 // CORS PRE-Flight
 // Options
 
-const ACCEPTED_ORIGINS = [
-  'http://localhost:8080',
-  'http://localhost:1234',
-  'https://movies.com',
-  'http;//jarole.dev'
-]
+
 
 app.get('/shifts', (req, res) => {
-  const origin = req.header('origin')
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    res.header('Access-Control-Allow-Origin', origin)
-  }
   const { rider_id } = req.query
   if (rider_id) {
     // Convertir rider_id a entero para asegurar la comparación correcta
@@ -70,10 +79,6 @@ app.post('/shifts', (req, res) => {
   res.status(201).json(newShift) // es interesante devolver el recurso para actualizar la caché del cliente
 })
 app.delete('/shifts/:id', (req, res) => {
-  const origin = req.header('origin')
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    res.header('Access-Control-Allow-Origin', origin)
-  }
   const { id } = req.params
   const shiftIndex = shifts.findIndex(shift => shift.id === id)
 
@@ -100,14 +105,6 @@ app.patch('/shifts/:id', (req, res) => {
   shifts[shiftIndex] = updatedShift
 
   return res.status(200).json(updatedShift)
-})
-app.options('/shifts/:id', (req, res) => {
-  const origin = req.header('origin')
-  if (ACCEPTED_ORIGINS.includes(origin) || !origin) {
-    res.header('Access-Control-Allow-Origin', origin)
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE')
-  }
-  return res.sendStatus(200)
 })
 
 const PORT = process.env.PORT ?? 1234
