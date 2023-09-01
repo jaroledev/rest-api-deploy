@@ -1,13 +1,15 @@
-const express = require('express')
-const crypto = require('node:crypto')
-const cors = require('cors')
-const shifts = require('./shifts.json')
+import express, { json } from 'express'
+import { randomUUID } from 'node:crypto'
+import cors from 'cors'
+import { validateShift, validatePartialShift } from './schemas/shifts.js'
 
-const { validateShift, validatePartialShift } = require('./schemas/shifts')
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
+const shifts = require('./shifts.json')
 
 const app = express()
 
-app.use(express.json())
+app.use(json())
 app.use(cors({
   origin:(origin, callback) => {
     const ACCEPTED_ORIGINS = [
@@ -68,7 +70,7 @@ app.post('/shifts', (req, res) => {
   }
 
   const newShift = {
-    id: crypto.randomUUID(), // uuid v4
+    id: randomUUID(), // uuid v4
     ...result.data
 
   }
